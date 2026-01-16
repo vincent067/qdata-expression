@@ -1,0 +1,205 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qdata-expression"
+version = "0.1.0"
+description = "A safe and extensible expression engine for Python with template rendering capabilities"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "广东轻亿云软件科技有限公司", email = "opensource@qeasy.cloud"}
+]
+maintainers = [
+    {name = "QData Team", email = "opensource@qeasy.cloud"}
+]
+requires-python = ">=3.11"
+keywords = ["qdata", "expression", "template", "jinja2", "eval", "safe", "sandbox", "qeasy"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: General",
+    "Typing :: Typed",
+]
+dependencies = [
+    "simpleeval>=0.9.13",
+    "jinja2>=3.1.0",
+    "typing-extensions>=4.0.0; python_version<'3.12'",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-benchmark>=4.0.0",
+    "pytest-mock>=3.11.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "mypy>=1.5.0",
+    "pre-commit>=3.4.0",
+    "ruff>=0.1.0",
+    "bandit>=1.7.0",
+    "safety>=2.3.0",
+]
+docs = [
+    "sphinx>=7.0.0",
+    "sphinx-rtd-theme>=1.3.0",
+    "sphinx-autodoc-typehints>=1.24.0",
+    "myst-parser>=2.0.0",
+]
+all = [
+    "qdata-expression[dev,docs]"
+]
+
+[project.urls]
+Homepage = "https://www.qeasy.cloud"
+Documentation = "https://github.com/qeasy/qdata-expression#readme"
+Repository = "https://github.com/qeasy/qdata-expression"
+"Bug Tracker" = "https://github.com/qeasy/qdata-expression/issues"
+Changelog = "https://github.com/qeasy/qdata-expression/blob/main/CHANGELOG.md"
+
+[project.scripts]
+qdata-expr = "qdata_expr.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
+
+# ========== Black Configuration ==========
+[tool.black]
+line-length = 100
+target-version = ['py311', 'py312', 'py313']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+# ========== isort Configuration ==========
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 100
+known_first_party = ["qdata_expr"]
+known_third_party = ["pytest", "jinja2", "simpleeval"]
+
+# ========== MyPy Configuration ==========
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+# ========== Pytest Configuration ==========
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--cov=qdata_expr",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-report=xml",
+    "--strict-markers",
+    "--strict-config",
+    "--disable-warnings",
+]
+minversion = "7.0"
+
+# ========== Coverage Configuration ==========
+[tool.coverage.run]
+source = ["src/qdata_expr"]
+omit = [
+    "*/tests/*",
+    "*/examples/*",
+    "*/docs/*",
+    "*/venv/*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+# ========== Ruff Configuration ==========
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+    "ANN",# flake8-annotations
+    "S",  # flake8-bandit
+    "TCH",# flake8-type-checking
+    "PTH",# flake8-use-pathlib
+    "COM",# flake8-commas
+    "C90",# mccabe complexity
+]
+ignore = [
+    "ANN101", # Missing type annotation for `self` in method
+    "ANN102", # Missing type annotation for `cls` in classmethod
+    "COM812", # Trailing comma missing
+    "C901",   # Too complex
+]
+
+[tool.ruff.per-file-ignores]
+"tests/*" = ["ANN", "S101"]
+"examples/*" = ["ANN"]
+"docs/*" = ["ANN"]
+
+[tool.ruff.mccabe]
+max-complexity = 10

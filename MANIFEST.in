@@ -1,0 +1,33 @@
+# Include README and license
+include README.md
+include LICENSE
+include CHANGELOG.md
+
+# Include all Python source files
+recursive-include src/qdata_expr *.py
+
+# Include type information
+include src/qdata_expr/py.typed
+
+# Include tests
+recursive-include tests *.py
+
+# Include examples
+recursive-include examples *.py
+
+# Include documentation
+recursive-include docs *.md *.rst *.txt
+
+# Include configuration files
+include pyproject.toml
+include .gitignore
+
+# Exclude compiled files
+global-exclude __pycache__
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.pyd
+
+# Exclude development files
+global-exclude .DS_Store
+global-exclude Thumbs.db
