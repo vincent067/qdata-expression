@@ -18,7 +18,6 @@ from typing import Any
 
 from .exceptions import ForbiddenAccessError, SecurityViolationError
 
-
 # ============================================================
 # 安全配置
 # ============================================================

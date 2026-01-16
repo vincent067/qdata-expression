@@ -29,9 +29,9 @@ import sys
 from typing import Any
 
 from ._version import __version__
-from .evaluator import ExpressionEngine, evaluate
-from .template import render_template, validate_template
+from .evaluator import ExpressionEngine
 from .functions import FunctionCategory
+from .template import render_template, validate_template
 
 
 def cmd_eval(args: argparse.Namespace) -> int:
@@ -111,13 +111,11 @@ def cmd_functions(args: argparse.Namespace) -> int:
 
     if args.category:
         try:
-            category = FunctionCategory(args.category)
+            _ = FunctionCategory(args.category)  # Validate category
         except ValueError:
             print(f"错误: 未知分类 '{args.category}'", file=sys.stderr)
             print(f"可用分类: {', '.join(c.value for c in FunctionCategory)}", file=sys.stderr)
             return 1
-    else:
-        category = None
 
     functions = engine.list_functions()
 

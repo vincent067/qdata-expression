@@ -4,7 +4,7 @@
 提供列表和集合处理相关的内置函数。
 """
 
-from collections.abc import Callable, Iterable
+from collections.abc import Callable
 from typing import Any
 
 from .base import FunctionCategory, FunctionDefinition

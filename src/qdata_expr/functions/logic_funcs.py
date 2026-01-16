@@ -9,7 +9,6 @@ from typing import Any
 
 from .base import FunctionCategory, FunctionDefinition
 
-
 # ============================================================
 # 空值判断
 # ============================================================
