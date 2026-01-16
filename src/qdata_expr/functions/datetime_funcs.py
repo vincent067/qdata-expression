@@ -5,7 +5,7 @@
 """
 
 from collections.abc import Callable
-from datetime import date, datetime, time, timedelta
+from datetime import UTC, date, datetime, time, timedelta
 from typing import Any
 
 from .base import FunctionCategory, FunctionDefinition
@@ -67,8 +67,7 @@ def expr_today() -> date:
 
 def expr_utc_now() -> datetime:
     """返回当前 UTC 时间"""
-    from datetime import timezone
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def expr_current_time() -> time:

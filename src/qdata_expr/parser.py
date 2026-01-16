@@ -9,12 +9,8 @@
 
 import ast
 import re
-from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
-
-from .exceptions import ExpressionParseError
-
 
 # ============================================================
 # 解析结果

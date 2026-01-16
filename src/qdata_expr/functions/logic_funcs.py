@@ -9,7 +9,6 @@ from typing import Any
 
 from .base import FunctionCategory, FunctionDefinition
 
-
 # ============================================================
 # 空值判断
 # ============================================================
@@ -393,19 +392,19 @@ LOGIC_FUNCTIONS: dict[str, FunctionDefinition] = {
         min_args=2, max_args=3,
     ),
     # 布尔运算
-    "and": _create_function_definition(
-        "and", expr_and, "逻辑与",
-        "and(*values) -> bool", ["and(True, True) = True", "and(True, False) = False"],
+    "bool_and": _create_function_definition(
+        "bool_and", expr_and, "逻辑与",
+        "bool_and(*values) -> bool", ["bool_and(True, True) = True", "bool_and(True, False) = False"],
         min_args=1,
     ),
-    "or": _create_function_definition(
-        "or", expr_or, "逻辑或",
-        "or(*values) -> bool", ["or(True, False) = True", "or(False, False) = False"],
+    "bool_or": _create_function_definition(
+        "bool_or", expr_or, "逻辑或",
+        "bool_or(*values) -> bool", ["bool_or(True, False) = True", "bool_or(False, False) = False"],
         min_args=1,
     ),
-    "not": _create_function_definition(
-        "not", expr_not, "逻辑非",
-        "not(value) -> bool", ["not(True) = False", "not(False) = True"],
+    "bool_not": _create_function_definition(
+        "bool_not", expr_not, "逻辑非",
+        "bool_not(value) -> bool", ["bool_not(True) = False", "bool_not(False) = True"],
         min_args=1, max_args=1,
     ),
     "xor": _create_function_definition(
@@ -449,9 +448,9 @@ LOGIC_FUNCTIONS: dict[str, FunctionDefinition] = {
         "between(value, low, high) -> bool", ["between(5, 1, 10) = True"],
         min_args=3, max_args=3,
     ),
-    "in": _create_function_definition(
-        "in", expr_in, "判断值是否在列表中",
-        "in(value, *items) -> bool", ["in(1, 1, 2, 3) = True", 'in("a", ["a", "b"]) = True'],
+    "contains_value": _create_function_definition(
+        "contains_value", expr_in, "判断值是否在列表中",
+        "contains_value(value, *items) -> bool", ["contains_value(1, 1, 2, 3) = True", 'contains_value("a", ["a", "b"]) = True'],
         min_args=2,
     ),
     "not_in": _create_function_definition(

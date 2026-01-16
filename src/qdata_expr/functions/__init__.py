@@ -28,8 +28,8 @@ from .base import (
     FunctionDefinition,
     FunctionRegistry,
     builtin_function,
-    get_builtin_functions,
     get_all_builtin_functions,
+    get_builtin_functions,
 )
 from .datetime_funcs import DATETIME_FUNCTIONS
 from .list_funcs import LIST_FUNCTIONS

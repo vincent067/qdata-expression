@@ -25,13 +25,12 @@ from .exceptions import (
 from .functions.base import (
     FunctionRegistry,
 )
+from .functions.datetime_funcs import DATETIME_FUNCTIONS
+from .functions.list_funcs import LIST_FUNCTIONS
+from .functions.logic_funcs import LOGIC_FUNCTIONS
 from .functions.math_funcs import MATH_FUNCTIONS
 from .functions.string_funcs import STRING_FUNCTIONS
-from .functions.datetime_funcs import DATETIME_FUNCTIONS
-from .functions.logic_funcs import LOGIC_FUNCTIONS
-from .functions.list_funcs import LIST_FUNCTIONS
 from .sandbox import Sandbox, SandboxConfig
-
 
 # ============================================================
 # 表达式缓存
@@ -120,6 +119,19 @@ class CompiledExpression:
             )
         except SyntaxError as e:
             raise ExpressionParseError(expression, f"语法错误: {e.msg}", e.offset)
+
+    def evaluate(self, context: dict[str, Any] | None = None) -> Any:
+        """执行编译后的表达式
+
+        Args:
+            context: 上下文变量
+
+        Returns:
+            计算结果
+        """
+        context = context or {}
+        evaluator = SafeEvaluator(names=context)
+        return evaluator.eval(self.expression)
 
 
 class ExpressionCache:
@@ -324,7 +336,17 @@ class SafeEvaluator:
         # 属性访问
         if isinstance(node, ast.Attribute):
             obj = self._eval_node(node.value)
-            return getattr(obj, node.attr)
+            attr = node.attr
+            # 对于字典，使用键访问
+            if isinstance(obj, dict):
+                if attr in obj:
+                    return obj[attr]
+                # 如果键不存在，尝试作为属性访问（支持 dict 的方法调用）
+                if hasattr(obj, attr):
+                    return getattr(obj, attr)
+                # 键不存在时返回 None（类似于 get 方法）
+                return None
+            return getattr(obj, attr)
 
         # 下标访问
         if isinstance(node, ast.Subscript):
@@ -368,7 +390,92 @@ class SafeEvaluator:
                     parts.append(str(self._eval_node(value.value)))
             return "".join(parts)
 
+        # 列表推导式
+        if isinstance(node, ast.ListComp):
+            return self._eval_comprehension(node)
+
+        # 集合推导式
+        if isinstance(node, ast.SetComp):
+            return set(self._eval_comprehension(node))
+
+        # 字典推导式
+        if isinstance(node, ast.DictComp):
+            return self._eval_dict_comprehension(node)
+
+        # 生成器表达式
+        if isinstance(node, ast.GeneratorExp):
+            return self._eval_comprehension(node)
+
         raise ExpressionEvalError("", f"不支持的表达式类型: {type(node).__name__}")
+
+    def _eval_comprehension(
+        self,
+        node: ast.ListComp | ast.SetComp | ast.GeneratorExp,
+    ) -> list:
+        """求值列表/集合/生成器推导式"""
+        # 保存当前 names
+        saved_names = dict(self.names)
+
+        result = []
+        self._eval_generators(
+            generators=node.generators,
+            index=0,
+            callback=lambda: result.append(self._eval_node(node.elt)),
+        )
+
+        # 恢复 names
+        self.names = saved_names
+        return result
+
+    def _eval_dict_comprehension(self, node: ast.DictComp) -> dict:
+        """求值字典推导式"""
+        # 保存当前 names
+        saved_names = dict(self.names)
+
+        result = {}
+
+        def add_item() -> None:
+            key = self._eval_node(node.key)
+            value = self._eval_node(node.value)
+            result[key] = value
+
+        self._eval_generators(
+            generators=node.generators,
+            index=0,
+            callback=add_item,
+        )
+
+        # 恢复 names
+        self.names = saved_names
+        return result
+
+    def _eval_generators(
+        self,
+        generators: list[ast.comprehension],
+        index: int,
+        callback: Callable[[], None],
+    ) -> None:
+        """递归求值推导式的生成器"""
+        if index >= len(generators):
+            callback()
+            return
+
+        comp = generators[index]
+        iterable = self._eval_node(comp.iter)
+
+        for item in iterable:
+            # 设置迭代变量
+            if isinstance(comp.target, ast.Name):
+                self.names[comp.target.id] = item
+            elif isinstance(comp.target, ast.Tuple):
+                # 解包
+                for i, elt in enumerate(comp.target.elts):
+                    if isinstance(elt, ast.Name):
+                        self.names[elt.id] = item[i]
+
+            # 检查条件
+            if all(self._eval_node(if_clause) for if_clause in comp.ifs):
+                self._eval_generators(generators, index + 1, callback)
 
 
 # ============================================================
@@ -497,6 +604,9 @@ class ExpressionEngine:
         """
         context = context or {}
 
+        # 添加数学常量
+        context = self._add_math_constants(context)
+
         # 安全检查
         if self._sandbox:
             self._sandbox.validate_expression(expression)
@@ -506,6 +616,30 @@ class ExpressionEngine:
         evaluator = SafeEvaluator(names=context, functions=functions)
 
         return evaluator.eval(expression)
+
+    def _add_math_constants(self, context: dict[str, Any]) -> dict[str, Any]:
+        """添加数学常量到上下文（如果未定义）
+
+        Args:
+            context: 原始上下文
+
+        Returns:
+            包含数学常量的上下文
+        """
+        import math
+        result = dict(context)  # 复制，不修改原始上下文
+
+        # 添加常用数学常量
+        if "e" not in result:
+            result["e"] = math.e
+        if "pi" not in result:
+            result["pi"] = math.pi
+        if "inf" not in result:
+            result["inf"] = math.inf
+        if "nan" not in result:
+            result["nan"] = math.nan
+
+        return result
 
     def validate(self, expression: str) -> list[str]:
         """验证表达式
