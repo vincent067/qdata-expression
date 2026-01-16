@@ -278,7 +278,12 @@ def expr_is_numeric(value: Any) -> bool:
 
 
 def expr_len(value: Any) -> int:
-    """获取长度"""
+    """获取长度
+
+    对于字符串，返回字符数；对于列表、元组、字典等，返回元素个数。
+    """
+    if hasattr(value, "__len__"):
+        return len(value)
     return len(_to_str(value))
 
 

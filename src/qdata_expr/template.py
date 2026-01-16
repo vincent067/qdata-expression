@@ -51,18 +51,19 @@ class SimpleTemplateEngine:
     仅支持基本的变量替换 {{ variable }}。
     """
 
-    import re
+    import re as _re
 
-    VARIABLE_PATTERN = re.compile(r'\{\{\s*([a-zA-Z_][a-zA-Z0-9_.]*)\s*\}\}')
+    VARIABLE_PATTERN = _re.compile(r'\{\{\s*([a-zA-Z_][a-zA-Z0-9_.]*)\s*\}\}')
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._filters: dict[str, Callable] = {}
 
     def render(self, template: str, context: dict[str, Any] | None = None) -> str:
         """渲染模板"""
+        import re
         context = context or {}
 
-        def replace(match: re.Match) -> str:
+        def replace(match: re.Match) -> str:  # type: ignore[type-arg]
             path = match.group(1)
             parts = path.split(".")
             value = context
