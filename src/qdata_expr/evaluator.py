@@ -340,7 +340,13 @@ class SafeEvaluator:
             attr = node.attr
             # 对于字典，使用键访问
             if isinstance(obj, dict):
-                return obj.get(attr)
+                if attr in obj:
+                    return obj[attr]
+                # 如果键不存在，尝试作为属性访问（支持 dict 的方法调用）
+                if hasattr(obj, attr):
+                    return getattr(obj, attr)
+                # 键不存在时返回 None（类似于 get 方法）
+                return None
             return getattr(obj, attr)
 
         # 下标访问
