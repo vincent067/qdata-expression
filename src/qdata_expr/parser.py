@@ -4,7 +4,7 @@
 # 条款重新分发或修改；详见 LICENSE 文件。
 #
 # 任何商业用途必须另行获得商业许可，详见 COMMERCIAL-LICENSE.txt。
-# 商业许可咨询：vincent@qeasy.com
+# 商业许可咨询：vincent@qeasy.cloud
 #
 # 本程序的发布是希望它能有用，但不提供任何保证。
 

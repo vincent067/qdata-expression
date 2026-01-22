@@ -184,7 +184,7 @@ pytest --cov=qdata_expr --cov-report=html
 - ❌ 超过 5 个用户的组织使用
 - ❌ 任何以盈利为目的的部署和使用
 
-**商业许可咨询**：📧 vincent@qeasy.com
+**商业许可咨询**：📧 vincent@qeasy.cloud
 
 ### 📋 许可文件
 
@@ -205,7 +205,7 @@ pytest --cov=qdata_expr --cov-report=html
 专注数据集成与处理，提供企业级 ETL/ELT 解决方案  
 🌐 官网：[https://www.qeasy.cloud](https://www.qeasy.cloud)  
 📧 开源项目：opensource@qeasy.cloud  
-📧 商业咨询：vincent@qeasy.com
+📧 商业咨询：vincent@qeasy.cloud
 
 ---
 
