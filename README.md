@@ -11,8 +11,11 @@
 
 <p align="center">
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+"></a>
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
-  <a href="https://badge.fury.io/py/qdata-expression"><img src="https://badge.fury.io/py/qdata-expression.svg" alt="PyPI version"></a>
+  <a href="https://www.gnu.org/licenses/agpl-3.0"><img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="License: AGPL v3"></a>
+  <a href="https://pypi.org/project/qdata-expression/"><img src="https://img.shields.io/pypi/v/qdata-expression.svg" alt="PyPI version"></a>
+  <a href="https://pypi.org/project/qdata-expression/"><img src="https://img.shields.io/pypi/dm/qdata-expression.svg" alt="Downloads"></a>
+  <a href="https://github.com/qeasy/qdata-expression/actions/workflows/ci.yml"><img src="https://github.com/qeasy/qdata-expression/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://codecov.io/gh/qeasy/qdata-expression"><img src="https://codecov.io/gh/qeasy/qdata-expression/branch/main/graph/badge.svg" alt="Coverage"></a>
   <a href="https://jinja.palletsprojects.com/"><img src="https://img.shields.io/badge/Powered%20by-Jinja2-red.svg" alt="Jinja2"></a>
 </p>
 
@@ -159,9 +162,40 @@ pytest --cov=qdata_expr --cov-report=html
 
 ---
 
-## 📄 许可证
+## 📄 许可与商业政策
 
-本项目采用 [MIT](LICENSE) 许可证开源。
+### 🔓 开源协议
+
+本项目采用 **GNU Affero General Public License v3.0 (AGPL-3.0)** 开源协议。
+
+- ✅ **个人学习/研究**：完全免费，无需授权
+- ✅ **开源项目**：可自由使用，需遵守 AGPL-3.0 条款
+- ✅ **修改与分发**：允许修改和重新分发，但必须保持开源
+
+**重要**：如果你修改本软件并提供网络服务（包括内部使用），根据 AGPL-3.0 条款，你必须公开你的修改源代码。
+
+### 💼 商业用途
+
+任何**商业用途**必须单独购买商业许可，包括但不限于：
+
+- ❌ 企业/公司在生产环境中使用
+- ❌ 提供基于本软件的商业服务或 SaaS
+- ❌ 集成到商业产品中销售
+- ❌ 超过 5 个用户的组织使用
+- ❌ 任何以盈利为目的的部署和使用
+
+**商业许可咨询**：📧 vincent@qeasy.com
+
+### 📋 许可文件
+
+- **开源许可**：[LICENSE](LICENSE) - AGPL-3.0 完整条款
+- **商业许可**：[COMMERCIAL-LICENSE.txt](COMMERCIAL-LICENSE.txt) - 商业授权详情
+
+### ⚠️ 重要提示
+
+**未经授权的商业使用将构成版权侵权，我们保留追究法律责任的权利。**
+
+详细说明请查看：[COMMERCIAL-LICENSE.txt](COMMERCIAL-LICENSE.txt)
 
 ---
 
@@ -170,7 +204,8 @@ pytest --cov=qdata_expr --cov-report=html
 **广东轻亿云软件科技有限公司**  
 专注数据集成与处理，提供企业级 ETL/ELT 解决方案  
 🌐 官网：[https://www.qeasy.cloud](https://www.qeasy.cloud)  
-📧 联系：opensource@qeasy.cloud
+📧 开源项目：opensource@qeasy.cloud  
+📧 商业咨询：vincent@qeasy.com
 
 ---
 

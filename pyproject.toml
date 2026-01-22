@@ -7,7 +7,7 @@ name = "qdata-expression"
 version = "0.1.0"
 description = "A safe and extensible expression engine for Python with template rendering capabilities"
 readme = "README.md"
-license = {text = "MIT"}
+license = {text = "AGPL-3.0-or-later"}
 authors = [
     {name = "广东轻亿云软件科技有限公司", email = "opensource@qeasy.cloud"}
 ]
@@ -19,7 +19,7 @@ keywords = ["qdata", "expression", "template", "jinja2", "eval", "safe", "sandbo
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",

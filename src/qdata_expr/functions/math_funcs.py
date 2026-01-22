@@ -1,3 +1,7 @@
+# Copyright (c) 2024-2026 广东轻亿云软件科技有限公司
+# AGPL-3.0 License - 商业用途需购买许可
+# 详见 LICENSE 和 COMMERCIAL-LICENSE.txt
+
 """
 数学函数库
 

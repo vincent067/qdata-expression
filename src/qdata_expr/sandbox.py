@@ -1,3 +1,13 @@
+# Copyright (c) 2024-2026 广东轻亿云软件科技有限公司
+#
+# 本程序为自由软件：你可按 GNU Affero General Public License v3.0 (AGPL-3.0) 
+# 条款重新分发或修改；详见 LICENSE 文件。
+#
+# 任何商业用途必须另行获得商业许可，详见 COMMERCIAL-LICENSE.txt。
+# 商业许可咨询：vincent@qeasy.com
+#
+# 本程序的发布是希望它能有用，但不提供任何保证。
+
 """
 安全沙箱
 
