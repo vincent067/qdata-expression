@@ -25,14 +25,14 @@ repos:
       - id: black
         args: ['--line-length=100']
 
-  # Import sorting
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        args: ['--profile=black', '--line-length=100']
+  # Import sorting (disabled - ruff handles this via 'I' rule)
+  # - repo: https://github.com/pycqa/isort
+  #   rev: 5.13.2
+  #   hooks:
+  #     - id: isort
+  #       args: ['--profile=black', '--line-length=100']
 
-  # Linting with ruff
+  # Linting with ruff (includes isort via 'I' rule)
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.1.9
     hooks:

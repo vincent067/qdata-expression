@@ -2,17 +2,11 @@
 Pytest configuration and fixtures for qdata-expression tests.
 """
 
+from typing import Any
+
 import pytest
-from typing import Any, Dict
 
-from qdata_expr import (
-    ContextResolver,
-    ExpressionEngine,
-    Sandbox,
-    SandboxConfig,
-    TemplateEngine,
-)
-
+from qdata_expr import ContextResolver, ExpressionEngine, Sandbox, SandboxConfig, TemplateEngine
 
 # ============================================================
 # Core Fixtures
@@ -60,7 +54,7 @@ def strict_sandbox() -> Sandbox:
 
 
 @pytest.fixture
-def sample_context() -> Dict[str, Any]:
+def sample_context() -> dict[str, Any]:
     """Provide a sample context for testing."""
     return {
         "user": {
@@ -88,18 +82,12 @@ def sample_context() -> Dict[str, Any]:
         },
         "numbers": [1, 2, 3, 4, 5],
         "words": ["apple", "banana", "cherry"],
-        "nested": {
-            "level1": {
-                "level2": {
-                    "level3": "deep_value"
-                }
-            }
-        },
+        "nested": {"level1": {"level2": {"level3": "deep_value"}}},
     }
 
 
 @pytest.fixture
-def math_context() -> Dict[str, Any]:
+def math_context() -> dict[str, Any]:
     """Provide a context for math operations."""
     return {
         "a": 10,
@@ -112,7 +100,7 @@ def math_context() -> Dict[str, Any]:
 
 
 @pytest.fixture
-def string_context() -> Dict[str, Any]:
+def string_context() -> dict[str, Any]:
     """Provide a context for string operations."""
     return {
         "name": "  John Doe  ",
@@ -126,9 +114,10 @@ def string_context() -> Dict[str, Any]:
 
 
 @pytest.fixture
-def date_context() -> Dict[str, Any]:
+def date_context() -> dict[str, Any]:
     """Provide a context for date operations."""
-    from datetime import datetime, date
+    from datetime import date, datetime
+
     return {
         "now": datetime(2024, 1, 15, 14, 30, 45),
         "today": date(2024, 1, 15),
@@ -140,7 +129,7 @@ def date_context() -> Dict[str, Any]:
 
 
 @pytest.fixture
-def list_context() -> Dict[str, Any]:
+def list_context() -> dict[str, Any]:
     """Provide a context for list operations."""
     return {
         "numbers": [5, 2, 8, 1, 9, 3],
@@ -162,7 +151,7 @@ def list_context() -> Dict[str, Any]:
 
 
 @pytest.fixture
-def simple_expressions() -> Dict[str, str]:
+def simple_expressions() -> dict[str, str]:
     """Provide simple expressions for testing."""
     return {
         "arithmetic": "2 + 3 * 4",
@@ -176,7 +165,7 @@ def simple_expressions() -> Dict[str, str]:
 
 
 @pytest.fixture
-def complex_expressions() -> Dict[str, str]:
+def complex_expressions() -> dict[str, str]:
     """Provide complex expressions for testing."""
     return {
         "nested": "sum([x**2 for x in range(5) if x % 2 == 0])",
@@ -200,7 +189,7 @@ def complex_expressions() -> Dict[str, str]:
 
 
 @pytest.fixture
-def simple_templates() -> Dict[str, str]:
+def simple_templates() -> dict[str, str]:
     """Provide simple templates for testing."""
     return {
         "basic": "Hello, {{ name }}!",
@@ -212,7 +201,7 @@ def simple_templates() -> Dict[str, str]:
 
 
 @pytest.fixture
-def complex_templates() -> Dict[str, str]:
+def complex_templates() -> dict[str, str]:
     """Provide complex templates for testing."""
     return {
         "condition": """
@@ -252,10 +241,10 @@ Addresses:
 
 
 @pytest.fixture
-def dangerous_expressions() -> Dict[str, str]:
+def dangerous_expressions() -> dict[str, str]:
     """Provide dangerous expressions for security testing."""
     return {
-        "eval": "eval('__import__(\"os\").system(\"echo hacked\")')",
+        "eval": 'eval(\'__import__("os").system("echo hacked")\')',
         "exec": "exec('import os; os.system(\"echo hacked\")')",
         "import": "__import__('os').system('echo hacked')",
         "open": "open('/etc/passwd').read()",
@@ -267,7 +256,7 @@ def dangerous_expressions() -> Dict[str, str]:
 
 
 @pytest.fixture
-def safe_expressions() -> Dict[str, str]:
+def safe_expressions() -> dict[str, str]:
     """Provide safe expressions for testing."""
     return {
         "math": "2 + 3 * 4",
@@ -285,24 +274,15 @@ def safe_expressions() -> Dict[str, str]:
 
 
 @pytest.fixture
-def large_context() -> Dict[str, Any]:
+def large_context() -> dict[str, Any]:
     """Provide a large context for performance testing."""
     return {
         "data": list(range(1000)),
         "nested": {
-            f"level{i}": {
-                f"key{j}": f"value{i}_{j}"
-                for j in range(100)
-            }
-            for i in range(10)
+            f"level{i}": {f"key{j}": f"value{i}_{j}" for j in range(100)} for i in range(10)
         },
         "items": [
-            {
-                "id": i,
-                "name": f"Item {i}",
-                "price": i * 1.5,
-                "tags": [f"tag{j}" for j in range(5)]
-            }
+            {"id": i, "name": f"Item {i}", "price": i * 1.5, "tags": [f"tag{j}" for j in range(5)]}
             for i in range(100)
         ],
     }
@@ -316,7 +296,7 @@ def large_context() -> Dict[str, Any]:
 def assert_expression_result(
     engine: ExpressionEngine,
     expression: str,
-    context: Dict[str, Any],
+    context: dict[str, Any],
     expected: Any,
 ) -> None:
     """Helper to assert expression results."""
@@ -327,7 +307,7 @@ def assert_expression_result(
 def assert_template_result(
     engine: TemplateEngine,
     template: str,
-    context: Dict[str, Any],
+    context: dict[str, Any],
     expected: str,
 ) -> None:
     """Helper to assert template results."""

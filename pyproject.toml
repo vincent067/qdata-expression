@@ -79,7 +79,7 @@ where = ["src"]
 # ========== Black Configuration ==========
 [tool.black]
 line-length = 100
-target-version = ['py311', 'py312', 'py313']
+target-version = ['py311', 'py312']
 include = '\.pyi?$'
 extend-exclude = '''
 /(
@@ -174,6 +174,8 @@ directory = "htmlcov"
 [tool.ruff]
 target-version = "py311"
 line-length = 100
+
+[tool.ruff.lint]
 select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
@@ -196,10 +198,13 @@ ignore = [
     "C901",   # Too complex
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/*" = ["ANN", "S101"]
 "examples/*" = ["ANN"]
 "docs/*" = ["ANN"]
 
-[tool.ruff.mccabe]
-max-complexity = 10
+[tool.ruff.lint.isort]
+known-first-party = ["qdata_expr"]
+known-third-party = ["pytest", "jinja2", "simpleeval"]
+
+[tool.ruff.lint.mccabe]

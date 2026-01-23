@@ -5,25 +5,20 @@ These tests ensure robust behavior in edge cases and provide
 comprehensive coverage for the expression engine.
 """
 
-import pytest
 import json
-from datetime import datetime, date, timedelta
-from typing import Any
+from datetime import datetime
+
+import pytest
 
 from qdata_expr import (
-    ExpressionEngine,
-    TemplateEngine,
     ContextResolver,
-    ExpressionParser,
     ExpressionBuilder,
-    SafeEvaluator,
+    ExpressionEngine,
+    ExpressionEvalError,
     Sandbox,
     SandboxConfig,
-    FunctionRegistry,
-    FunctionCategory,
-    ExpressionEvalError,
-    ExpressionParseError,
-    TemplateRenderError,
+    TemplateEngine,
+    resolve,
 )
 
 
@@ -108,11 +103,11 @@ class TestEdgeCases:
 
         # Infinity
         result = engine.evaluate("inf", {})
-        assert result == float('inf')
+        assert result == float("inf")
 
         # Negative infinity
         result = engine.evaluate("-inf", {})
-        assert result == float('-inf')
+        assert result == float("-inf")
 
     def test_division_by_zero(self):
         """Test division by zero."""
@@ -273,8 +268,6 @@ class TestContextResolution:
 
     def test_array_negative_index(self):
         """Test negative array indexing."""
-        resolver = ContextResolver()
-
         context = {"numbers": [1, 2, 3, 4, 5]}
 
         # Use the engine to test negative indexing
@@ -525,7 +518,3 @@ class TestErrorMessages:
 
         # Error should mention the variable name
         assert "undefined_var" in str(exc_info.value)
-
-
-# Import resolve for test that needs it
-from qdata_expr import resolve

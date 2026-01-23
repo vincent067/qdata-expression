@@ -5,19 +5,15 @@ These tests verify that qdata-expression works correctly in DAG workflow scenari
 similar to what would be used in QDataV2.
 """
 
-import pytest
-from datetime import datetime, date
-from typing import Any
+from datetime import datetime
 
 from qdata_expr import (
     ExpressionEngine,
     TemplateEngine,
-    ContextResolver,
-    evaluate,
+    merge_context,
     render_template,
     resolve,
     set_path,
-    merge_context,
 )
 
 
@@ -43,7 +39,6 @@ class TestDAGNodeContext:
         }
 
         # Build node input context
-        resolver = ContextResolver()
         context = {
             "upstream": upstream_outputs,
             "node": {
@@ -84,22 +79,23 @@ class TestDAGNodeContext:
 
         # Calculate total
         result = engine.evaluate(
-            "sum([p['price'] * p['quantity'] for p in node_input['products']])",
-            context
+            "sum([p['price'] * p['quantity'] for p in node_input['products']])", context
         )
         assert result == 450  # 100*2 + 50*5
 
         # Apply discount
         discounted = engine.evaluate(
-            "sum([p['price'] * p['quantity'] for p in node_input['products']]) * (1 - config['discount'])",
-            context
+            "sum([p['price'] * p['quantity'] for p in node_input['products']]) "
+            "* (1 - config['discount'])",
+            context,
         )
         assert discounted == 405.0
 
         # Check threshold condition
         meets_threshold = engine.evaluate(
-            "sum([p['price'] * p['quantity'] for p in node_input['products']]) >= config['min_order']",
-            context
+            "sum([p['price'] * p['quantity'] for p in node_input['products']]) "
+            ">= config['min_order']",
+            context,
         )
         assert meets_threshold is True
 
@@ -120,7 +116,7 @@ class TestDAGNodeContext:
                 "'vip_processing' if order_total > 1000 and customer_tier == 'gold' else "
                 "'standard_processing' if order_total > 500 else "
                 "'basic_processing'",
-                context
+                context,
             )
             assert result == expected_branch, f"Failed for context {context}"
 
@@ -138,23 +134,16 @@ class TestDAGNodeContext:
 
         # Extract names
         names = engine.evaluate(
-            "[r['first_name'] + ' ' + r['last_name'] for r in records]",
-            context
+            "[r['first_name'] + ' ' + r['last_name'] for r in records]", context
         )
         assert names == ["John Doe", "Jane Smith", "Bob Johnson"]
 
         # Filter by score
-        high_scorers = engine.evaluate(
-            "[r for r in records if r['score'] >= 80]",
-            context
-        )
+        high_scorers = engine.evaluate("[r for r in records if r['score'] >= 80]", context)
         assert len(high_scorers) == 2
 
         # Calculate average
-        avg_score = engine.evaluate(
-            "sum([r['score'] for r in records]) / len(records)",
-            context
-        )
+        avg_score = engine.evaluate("sum([r['score'] for r in records]) / len(records)", context)
         assert avg_score == 85.0
 
     def test_error_handling_expressions(self):
@@ -169,23 +158,14 @@ class TestDAGNodeContext:
         }
 
         # Using if_null
-        result = engine.evaluate(
-            "if_null(data['nullable_field'], 'default_value')",
-            context
-        )
+        result = engine.evaluate("if_null(data['nullable_field'], 'default_value')", context)
         assert result == "default_value"
 
-        result = engine.evaluate(
-            "if_null(data['valid_field'], 'default_value')",
-            context
-        )
+        result = engine.evaluate("if_null(data['valid_field'], 'default_value')", context)
         assert result == "value"
 
         # Using coalesce
-        result = engine.evaluate(
-            "coalesce(data['nullable_field'], None, 'fallback')",
-            context
-        )
+        result = engine.evaluate("coalesce(data['nullable_field'], None, 'fallback')", context)
         assert result == "fallback"
 
 
@@ -333,24 +313,17 @@ class TestDataPipelinePatterns:
         }
 
         # Total sales
-        total = engine.evaluate(
-            "sum([s['amount'] for s in sales])",
-            context
-        )
+        total = engine.evaluate("sum([s['amount'] for s in sales])", context)
         assert total == 4500
 
         # Sales by region
         north_sales = engine.evaluate(
-            "sum([s['amount'] for s in sales if s['region'] == 'North'])",
-            context
+            "sum([s['amount'] for s in sales if s['region'] == 'North'])", context
         )
         assert north_sales == 1800
 
         # Average sale
-        avg = engine.evaluate(
-            "avg([s['amount'] for s in sales])",
-            context
-        )
+        avg = engine.evaluate("avg([s['amount'] for s in sales])", context)
         assert avg == 1125.0
 
     def test_date_filtering(self):
@@ -367,10 +340,7 @@ class TestDataPipelinePatterns:
         }
 
         # Filter orders after cutoff
-        result = engine.evaluate(
-            "[o for o in orders if o['date'] >= cutoff_date]",
-            context
-        )
+        result = engine.evaluate("[o for o in orders if o['date'] >= cutoff_date]", context)
         assert len(result) == 2
 
 
@@ -379,8 +349,6 @@ class TestContextMerging:
 
     def test_merge_upstream_outputs(self):
         """Test merging outputs from multiple upstream nodes."""
-        resolver = ContextResolver()
-
         node1_output = {
             "data": {"users": [{"id": 1}, {"id": 2}]},
             "metadata": {"count": 2},
@@ -402,8 +370,6 @@ class TestContextMerging:
 
     def test_context_path_building(self):
         """Test building context paths dynamically."""
-        resolver = ContextResolver()
-
         base_context = {}
 
         # Build context step by step

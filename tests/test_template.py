@@ -84,6 +84,7 @@ class TestTemplateEngine:
 
     def test_custom_filter(self, template_engine: TemplateEngine):
         """Test custom filter registration."""
+
         def double_filter(value):
             return value * 2
 
@@ -130,7 +131,7 @@ class TestTemplateEngine:
 {% endfor %}
 """
         result = template_engine.render(template, sample_context)
-        lines = [line.strip() for line in result.strip().split('\n') if line.strip()]
+        lines = [line.strip() for line in result.strip().split("\n") if line.strip()]
         assert len(lines) == 2
         assert "Laptop: $999.99" in lines
         assert "Mouse: $29.99" in lines
@@ -226,7 +227,7 @@ Hello, {{ name }}!
     def test_error_handling_undefined_variable(self, template_engine: TemplateEngine):
         """Test error handling for undefined variables."""
         template = "{{ undefined_variable }}"
-        
+
         # Default behavior (should render empty string for Jinja2)
         result = template_engine.render(template)
         if template_engine.has_full_support:
@@ -239,7 +240,7 @@ Hello, {{ name }}!
         """Test strict mode error handling."""
         engine = TemplateEngine(strict_undefined=True)
         template = "{{ undefined_variable }}"
-        
+
         if engine.has_full_support:
             with pytest.raises(TemplateRenderError):
                 engine.render(template)
@@ -248,7 +249,7 @@ Hello, {{ name }}!
         """Test syntax error handling."""
         engine = TemplateEngine()
         template = "{% if %}Invalid syntax{% endif %}"
-        
+
         if engine.has_full_support:
             with pytest.raises(TemplateParseError):
                 engine.render(template)
@@ -268,7 +269,7 @@ Hello, {{ name }}!
         """Test variable extraction from templates."""
         template = "Hello, {{ name }}! Your order #{{ order.id }} is {{ order.status }}."
         variables = template_engine.get_variables(template)
-        
+
         if template_engine.has_full_support:
             assert "name" in variables
             assert "order" in variables
@@ -287,7 +288,7 @@ Hello, {{ name }}!
 {% endif %}
 """
         variables = template_engine.get_variables(template)
-        
+
         if template_engine.has_full_support:
             assert "order" in variables
             assert "user" in variables
@@ -300,6 +301,7 @@ class TestJinja2TemplateEngine:
         """Test Jinja2 engine creation."""
         try:
             from qdata_expr.template import Jinja2TemplateEngine
+
             engine = Jinja2TemplateEngine()
             assert engine is not None
         except ImportError:
@@ -309,8 +311,9 @@ class TestJinja2TemplateEngine:
         """Test Jinja2 strict mode."""
         try:
             from qdata_expr.template import Jinja2TemplateEngine
+
             engine = Jinja2TemplateEngine(strict_undefined=True)
-            
+
             with pytest.raises(TemplateRenderError):
                 engine.render("{{ undefined_var }}")
         except ImportError:
@@ -320,11 +323,12 @@ class TestJinja2TemplateEngine:
         """Test Jinja2 custom filters."""
         try:
             from qdata_expr.template import Jinja2TemplateEngine
+
             engine = Jinja2TemplateEngine()
-            
+
             def reverse_filter(value):
                 return value[::-1]
-            
+
             engine.register_filter("reverse", reverse_filter)
             result = engine.render("{{ 'hello' | reverse }}")
             assert result == "olleh"
@@ -338,14 +342,16 @@ class TestSimpleTemplateEngine:
     def test_simple_engine_creation(self):
         """Test simple engine creation."""
         from qdata_expr.template import SimpleTemplateEngine
+
         engine = SimpleTemplateEngine()
         assert engine is not None
 
     def test_simple_engine_rendering(self):
         """Test simple engine rendering."""
         from qdata_expr.template import SimpleTemplateEngine
+
         engine = SimpleTemplateEngine()
-        
+
         template = "Hello, {{ name }}!"
         context = {"name": "World"}
         result = engine.render(template, context)
@@ -354,8 +360,9 @@ class TestSimpleTemplateEngine:
     def test_simple_engine_nested_variables(self):
         """Test simple engine with nested variables."""
         from qdata_expr.template import SimpleTemplateEngine
+
         engine = SimpleTemplateEngine()
-        
+
         template = "{{ user.name }} - {{ user.age }}"
         context = {"user": {"name": "Alice", "age": 30}}
         result = engine.render(template, context)
@@ -364,8 +371,9 @@ class TestSimpleTemplateEngine:
     def test_simple_engine_missing_variable(self):
         """Test simple engine with missing variable."""
         from qdata_expr.template import SimpleTemplateEngine
+
         engine = SimpleTemplateEngine()
-        
+
         template = "Hello, {{ missing }}!"
         result = engine.render(template, {})
         assert result == "Hello, !"

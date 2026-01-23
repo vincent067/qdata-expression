@@ -2,10 +2,7 @@
 Tests for expression evaluator.
 """
 
-import math
 import time
-from datetime import datetime
-from typing import Any
 
 import pytest
 
@@ -194,7 +191,9 @@ class TestExpressionEngine:
 
     def test_function_with_context(self, expression_engine: ExpressionEngine, sample_context: dict):
         """Test functions with context variables."""
-        result = expression_engine.evaluate("round(order.total * config.tax_rate, 2)", sample_context)
+        result = expression_engine.evaluate(
+            "round(order.total * config.tax_rate, 2)", sample_context
+        )
         expected = round(1059.97 * 0.1, 2)
         assert result == expected
 
@@ -227,6 +226,7 @@ class TestExpressionEngine:
 
     def test_custom_function_registration(self, expression_engine: ExpressionEngine):
         """Test custom function registration."""
+
         def multiply(a, b):
             return a * b
 
@@ -236,6 +236,7 @@ class TestExpressionEngine:
 
     def test_custom_function_with_context(self, expression_engine: ExpressionEngine):
         """Test custom function with context."""
+
         def calculate_tax(amount, rate=0.1):
             return amount * rate
 
@@ -246,6 +247,7 @@ class TestExpressionEngine:
 
     def test_function_override_builtin(self, expression_engine: ExpressionEngine):
         """Test overriding built-in functions."""
+
         def custom_abs(x):
             return x if x >= 0 else -x
 
@@ -293,7 +295,7 @@ class TestExpressionEngine:
     def test_clear_cache(self, expression_engine: ExpressionEngine):
         """Test clearing cache."""
         expression_engine.evaluate("2 + 3")
-        
+
         # Cache may or may not be used depending on implementation
         if expression_engine.cache_stats:
             expression_engine.clear_cache()
@@ -339,6 +341,7 @@ class TestSafeEvaluator:
 
     def test_safe_evaluator_with_functions(self):
         """Test SafeEvaluator with functions."""
+
         def custom_func(x):
             return x * 2
 
@@ -375,6 +378,7 @@ class TestConvenienceFunctions:
 
     def test_register_function_global(self):
         """Test register_function convenience function."""
+
         def double(x):
             return x * 2
 
@@ -399,7 +403,7 @@ class TestPerformance:
         """Test simple expression performance."""
         start_time = time.time()
         for _ in range(1000):
-            result = expression_engine.evaluate("2 + 3 * 4")
+            expression_engine.evaluate("2 + 3 * 4")
         end_time = time.time()
 
         elapsed = end_time - start_time
@@ -411,13 +415,10 @@ class TestPerformance:
     def test_complex_expression_performance(self, expression_engine: ExpressionEngine):
         """Test complex expression performance."""
         context = {"a": 10, "b": 20, "c": 30}
-        
+
         start_time = time.time()
         for _ in range(100):
-            result = expression_engine.evaluate(
-                "(a + b) * c / 2 + max(a, b, c) - min(a, b, c)",
-                context
-            )
+            expression_engine.evaluate("(a + b) * c / 2 + max(a, b, c) - min(a, b, c)", context)
         end_time = time.time()
 
         elapsed = end_time - start_time
@@ -429,7 +430,7 @@ class TestPerformance:
     def test_cache_performance(self, expression_engine: ExpressionEngine):
         """Test repeated expression evaluation performance."""
         expr = "sum([x**2 for x in range(10)])"
-        
+
         # First run
         result1 = expression_engine.evaluate(expr)
 

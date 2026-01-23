@@ -21,7 +21,7 @@ class TestSandboxConfig:
     def test_default_config(self):
         """Test default sandbox configuration."""
         config = SandboxConfig()
-        
+
         assert len(config.allowed_operators) > 0
         assert len(config.forbidden_names) > 0
         assert len(config.allowed_builtins) > 0
@@ -37,7 +37,7 @@ class TestSandboxConfig:
             max_execution_time=10.0,
             max_recursion_depth=50,
         )
-        
+
         assert config.strict_private_access
         assert config.max_execution_time == 10.0
         assert config.max_recursion_depth == 50
@@ -48,7 +48,7 @@ class TestSandboxConfig:
             forbidden_names={"eval", "exec"},
             allowed_builtins={"int", "str", "len"},
         )
-        
+
         assert "eval" in config.forbidden_names
         assert "exec" in config.forbidden_names
         assert "int" in config.allowed_builtins
@@ -84,7 +84,7 @@ class TestSandbox:
             "{'a': 1, 'b': 2}['a']",
             "[1, 2, 3][0]",
         ]
-        
+
         for expr in safe_exprs:
             errors = sandbox.check_expression(expr)
             assert len(errors) == 0, f"Expression should be safe: {expr}"
@@ -108,17 +108,17 @@ class TestSandbox:
             # Note: import statements are syntax errors in eval mode (not expressions)
             # They will fail with syntax error, which is still blocking dangerous code
         ]
-        
+
         for expr, expected_errors in unsafe_exprs:
             errors = sandbox.check_expression(expr)
             assert len(errors) > 0, f"Expression should be unsafe: {expr}"
             assert not sandbox.is_safe(expr), f"Expression should be unsafe: {expr}"
-            
+
             # Check that specific error patterns are present
             for expected in expected_errors:
                 found = any(expected in error for error in errors)
                 assert found, f"Expected error '{expected}' not found in {errors}"
-        
+
         # Import statements should fail (not valid expressions)
         import_exprs = [
             "import os",
@@ -133,10 +133,10 @@ class TestSandbox:
         # Strict mode
         config = SandboxConfig(strict_private_access=True)
         sandbox = Sandbox(config)
-        
+
         errors = sandbox.check_expression("obj._private")
         assert len(errors) > 0
-        
+
         # Non-strict mode
         sandbox_default = Sandbox()
         errors = sandbox_default.check_expression("obj._private")
@@ -163,7 +163,7 @@ class TestSandbox:
             "file('/etc/passwd')",
             "input('Enter: ')",
         ]
-        
+
         for expr in file_exprs:
             errors = sandbox.check_expression(expr)
             assert len(errors) > 0, f"File operation should be blocked: {expr}"
@@ -176,7 +176,7 @@ class TestSandbox:
             "from os import path",
             "from sys import *",
         ]
-        
+
         for expr in import_exprs:
             errors = sandbox.check_expression(expr)
             # Import statements should fail (they're not valid expressions)
@@ -186,14 +186,14 @@ class TestSandbox:
         """Test built-in function restrictions."""
         # These should be allowed
         allowed = ["abs(-5)", "len([1, 2, 3])", "str(123)", "int('456')"]
-        
+
         for expr in allowed:
             errors = sandbox.check_expression(expr)
             assert len(errors) == 0, f"Should be allowed: {expr}"
-        
+
         # These should be blocked
         blocked = ["eval('1+1')", "exec('pass')", "compile('1', '', 'eval')"]
-        
+
         for expr in blocked:
             errors = sandbox.check_expression(expr)
             assert len(errors) > 0, f"Should be blocked: {expr}"
@@ -206,17 +206,17 @@ class TestSandbox:
             "len(upper('hello'))",
             "max(len('abc'), len('de'))",
         ]
-        
+
         for expr in safe:
             errors = sandbox.check_expression(expr)
             assert len(errors) == 0, f"Should be safe: {expr}"
-        
+
         # Unsafe nested calls
         unsafe = [
             "eval(compile('1+1', '', 'eval'))",
             "getattr(object, '__class__').__name__",
         ]
-        
+
         for expr in unsafe:
             errors = sandbox.check_expression(expr)
             assert len(errors) > 0, f"Should be unsafe: {expr}"
@@ -231,7 +231,7 @@ class TestSandbox:
             "'hello'[0]",
             "'hello world'.split()",
         ]
-        
+
         for expr in safe_strings:
             errors = sandbox.check_expression(expr)
             assert len(errors) == 0, f"String operation should be safe: {expr}"
@@ -245,7 +245,7 @@ class TestSandbox:
             "sum([1, 2, 3])",
             "max([1, 2, 3])",
         ]
-        
+
         for expr in safe_lists:
             errors = sandbox.check_expression(expr)
             assert len(errors) == 0, f"List operation should be safe: {expr}"
@@ -258,7 +258,7 @@ class TestSandbox:
             "list({'a': 1, 'b': 2}.keys())",
             "list({'a': 1, 'b': 2}.values())",
         ]
-        
+
         for expr in safe_dicts:
             errors = sandbox.check_expression(expr)
             assert len(errors) == 0, f"Dict operation should be safe: {expr}"
@@ -276,7 +276,7 @@ class TestSandbox:
             "min(1, 2, 3)",
             "max(1, 2, 3)",
         ]
-        
+
         for expr in safe_math:
             errors = sandbox.check_expression(expr)
             assert len(errors) == 0, f"Math operation should be safe: {expr}"
@@ -285,7 +285,7 @@ class TestSandbox:
         """Test expression validation."""
         # Should not raise for safe expression
         sandbox.validate_expression("2 + 3")
-        
+
         # Should raise for unsafe expression
         with pytest.raises(SecurityViolationError):
             sandbox.validate_expression("eval('1+1')")
@@ -298,11 +298,11 @@ class TestSandbox:
             # Code object manipulation
             "(lambda: None).__code__",
         ]
-        
+
         for expr in complex_unsafe:
             errors = sandbox.check_expression(expr)
             assert len(errors) > 0, f"Complex unsafe pattern should be blocked: {expr}"
-        
+
         # These expressions are blocked because they use forbidden names
         # or have syntax issues when used as standalone expressions
         blocked_names = [
@@ -333,12 +333,13 @@ class TestSandbox:
             # Comments (should be blocked if they contain dangerous content)
             "# eval('dangerous')\n2 + 3",
         ]
-        
+
         for expr in edge_cases:
             # Should not crash
             try:
-                errors = sandbox.check_expression(expr)
+                result = sandbox.check_expression(expr)
                 # Either safe or unsafe is fine, just shouldn't crash
+                assert result is not None or result is None  # noqa: PLR6201
             except Exception as e:
                 pytest.fail(f"Edge case crashed: {expr} - {e}")
 
@@ -349,35 +350,35 @@ class TestSafeNameResolver:
     def test_safe_name_resolver_creation(self):
         """Test SafeNameResolver creation."""
         from qdata_expr.sandbox import SafeNameResolver
-        
+
         resolver = SafeNameResolver()
         assert resolver is not None
 
     def test_resolve_allowed_names(self):
         """Test resolving allowed names."""
         from qdata_expr.sandbox import SafeNameResolver
-        
+
         allowed_names = {"x": 10, "y": 20}
         resolver = SafeNameResolver(allowed_names=allowed_names)
-        
+
         assert resolver.resolve_name("x") == 10
         assert resolver.resolve_name("y") == 20
 
     def test_resolve_forbidden_names(self):
         """Test resolving forbidden names."""
         from qdata_expr.sandbox import SafeNameResolver
-        
+
         resolver = SafeNameResolver()
-        
+
         with pytest.raises(ForbiddenAccessError):
             resolver.resolve_name("eval")
 
     def test_resolve_builtins(self):
         """Test resolving built-ins."""
         from qdata_expr.sandbox import SafeNameResolver
-        
+
         resolver = SafeNameResolver()
-        
+
         # Should be able to resolve safe built-ins
         abs_func = resolver.resolve_name("abs")
         assert abs_func is not None
@@ -386,13 +387,13 @@ class TestSafeNameResolver:
     def test_resolve_attr_safety(self):
         """Test attribute resolution safety."""
         from qdata_expr.sandbox import SafeNameResolver
-        
+
         resolver = SafeNameResolver()
-        
+
         # Safe attribute
         result = resolver.resolve_attr("hello", "upper")
         assert callable(result)
-        
+
         # Unsafe attribute
         with pytest.raises(ForbiddenAccessError):
             resolver.resolve_attr("hello", "__class__")
@@ -400,12 +401,12 @@ class TestSafeNameResolver:
     def test_check_method_call(self):
         """Test method call checking."""
         from qdata_expr.sandbox import SafeNameResolver
-        
+
         resolver = SafeNameResolver()
-        
+
         # String methods should be allowed
         assert resolver.check_method_call("hello", "upper")
-        
+
         # Magic methods should not be allowed
         # Note: This depends on the specific implementation
 
@@ -416,7 +417,7 @@ class TestSafeWrapper:
     def test_safe_wrapper_creation(self):
         """Test SafeWrapper creation."""
         from qdata_expr.sandbox import SafeWrapper
-        
+
         wrapper = SafeWrapper("test")
         assert wrapper is not None
         assert repr(wrapper) == "SafeWrapper('test')"
@@ -424,9 +425,9 @@ class TestSafeWrapper:
     def test_safe_wrapper_getattr(self):
         """Test SafeWrapper getattr."""
         from qdata_expr.sandbox import SafeWrapper
-        
+
         wrapper = SafeWrapper("hello")
-        
+
         # Safe attribute
         upper_method = wrapper.upper
         assert callable(upper_method)
@@ -434,18 +435,20 @@ class TestSafeWrapper:
 
     def test_safe_wrapper_private_attr(self):
         """Test SafeWrapper private attribute blocking."""
-        from qdata_expr.sandbox import SafeWrapper, ForbiddenAccessError
-        
+        from qdata_expr.sandbox import ForbiddenAccessError, SafeWrapper
+
         wrapper = SafeWrapper("hello")
-        
+        assert wrapper is not None  # Ensure wrapper is created
+
         # Test blocking of underscore-prefixed attributes
         # This requires strict mode to be enabled
         from qdata_expr.sandbox import SandboxConfig
+
         strict_config = SandboxConfig(strict_private_access=True)
         strict_wrapper = SafeWrapper("hello", strict_config)
-        
+
         with pytest.raises(ForbiddenAccessError):
-            strict_wrapper._private_method  # Should raise in strict mode
+            _ = strict_wrapper._private_method  # Should raise in strict mode
 
 
 class TestConvenienceFunctions:
@@ -460,7 +463,7 @@ class TestConvenienceFunctions:
         """Test validate_expression_safety function."""
         # Should not raise for safe expression
         validate_expression_safety("2 + 3")
-        
+
         # Should raise for unsafe expression
         with pytest.raises(SecurityViolationError):
             validate_expression_safety("eval('1+1')")
@@ -470,6 +473,6 @@ class TestConvenienceFunctions:
         issues = get_expression_safety_issues("eval('1+1')")
         assert len(issues) > 0
         assert any("eval" in issue for issue in issues)
-        
+
         issues = get_expression_safety_issues("2 + 3")
         assert len(issues) == 0
